@@ -1,5 +1,6 @@
 "use strict";
-import ls from "./localStorage.js";
+import query from "./query.js";
+import ls from "./local_storage.js";
 
 const theme = {
     SUPPORTED_THEMES: ["light", "dark", "system", "reverse-system"],
@@ -9,7 +10,7 @@ const theme = {
         const resolvedTheme = resolvedName === "system" ? theme.getSystemTheme() : (resolvedName === "reverse-system" ? theme.getReverseSystemTheme() : resolvedName);
         const isLight = resolvedTheme === "light";
 
-        document.body.style.background = `url("/images/axolotlcode.png") center center / 33% no-repeat ${isLight ? "#e0e1e2" : "#1b1c1d"} `;
+        document.body.style.background = `url("./images/logo_${isLight ? "white" : "black"}.svg") center center / 33% no-repeat ${isLight ? "#e0e1e2" : "#1b1c1d"} `;
 
         document.getElementById("judge0-golden-layout-dark-theme-stylesheet").disabled = isLight;
         document.getElementById("judge0-golden-layout-light-theme-stylesheet").disabled = !isLight;
@@ -90,7 +91,7 @@ const theme = {
         }
     },
     getSystemTheme() {
-        return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
     },
     getReverseSystemTheme() {
         return theme.getSystemTheme() === "dark" ? "light" : "dark";
@@ -103,3 +104,18 @@ const theme = {
 };
 
 export default theme;
+
+document.addEventListener("DOMContentLoaded", function () {
+    require(["vs/editor/editor.main"], function () {
+        theme.set(query.get("theme"));
+    });
+    document.getElementById("judge0-theme-toggle-btn").addEventListener("click", theme.toggle);
+});
+
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+    ["system", "reverse-system"].forEach(t => {
+        if (theme.get() === t) {
+            theme.set(t, false);
+        }
+    });
+});

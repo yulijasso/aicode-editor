@@ -1,7 +1,10 @@
 "use strict";
+import query from "./query.js";
+import { IS_ELECTRON } from "./electron.js";
+import { IS_PUTER } from "./puter.js";
 
 const style = {
-    SUPPORTED_STYLES: ["default", "minimal", "standalone", "electron"],
+    SUPPORTED_STYLES: ["default", "minimal", "standalone", "electron", "puter"],
     DEFAULT_STYLE: "default",
     apply(name) {
         const resolvedName = style.SUPPORTED_STYLES.includes(name) ? name : style.DEFAULT_STYLE;
@@ -32,3 +35,13 @@ const style = {
 };
 
 export default style;
+
+document.addEventListener("DOMContentLoaded", function () {
+    if (IS_ELECTRON) {
+        style.apply("electron");
+    } else if (IS_PUTER) {
+        style.apply("puter");
+    } else {
+        style.apply(query.get("style"));
+    }
+});

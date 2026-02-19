@@ -1,12 +1,12 @@
 "use strict";
 
-export const IS_PUTER = typeof puter !== "undefined" && puter.env === "app";
+export const IS_PUTER = puter.env === "app";
 
 export function usePuter() {
-    return IS_PUTER || (typeof puter !== "undefined" && puter.auth.isSignedIn());
+    return IS_PUTER || puter.auth.isSignedIn();
 }
 
-export async function uiSignIn() {
+async function uiSignIn() {
     document.getElementById("judge0-sign-in-btn").classList.add("judge0-hidden");
     const signOutBtn = document.getElementById("judge0-sign-out-btn");
     signOutBtn.classList.remove("judge0-hidden");
@@ -23,7 +23,7 @@ export async function uiSignIn() {
     document.getElementById("judge0-inline-suggestions").disabled = false;
 }
 
-export function uiSignOut() {
+function uiSignOut() {
     document.getElementById("judge0-sign-in-btn").classList.remove("judge0-hidden");
     const signOutBtn = document.getElementById("judge0-sign-out-btn");
     signOutBtn.classList.add("judge0-hidden");
@@ -40,20 +40,26 @@ export function uiSignOut() {
     document.getElementById("judge0-inline-suggestions").disabled = true;
 }
 
-export function updateSignInUI() {
-    if (typeof puter !== "undefined" && puter.auth.isSignedIn()) {
+function updateSignInUI() {
+    if (puter.auth.isSignedIn()) {
         uiSignIn();
     } else {
         uiSignOut();
     }
 }
 
-export async function signIn() {
+async function signIn() {
     await puter.auth.signIn();
     updateSignInUI();
 }
 
-export function signOut() {
+function signOut() {
     puter.auth.signOut();
     updateSignInUI();
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("judge0-sign-in-btn").addEventListener("click", signIn);
+    document.getElementById("judge0-sign-out-btn").addEventListener("click", signOut);
+    updateSignInUI();
+});
